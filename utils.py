@@ -38,14 +38,21 @@ def build_phylo_tree(sequence):
     t.render("%%inline", w=400, units="px", tree_style=ts)
     return fig
 
-def generate_protein_description(sequence):
+def generate_protein_description(sequence: str, openai_api_key: str) -> str:
+    import openai
+    openai.api_key = openai_api_key
+
+    prompt = f"""Provide a functional summary for the following protein sequence:
+{sequence}
+Only output a short paragraph of 2–3 sentences in plain English, suitable for a biology researcher."""
+
     try:
-        prompt = f"Provide a functional summary for the following protein sequence:
-{sequence}"
         response = openai.ChatCompletion.create(
             model="gpt-4",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.5,
+            max_tokens=300,
         )
-        return response['choices'][0]['message']['content']
+        return response['choices'][0]['message']['content'].strip()
     except Exception as e:
-        return f"OpenAI API error: {e}"
+        return f"Error generating description: {e}"
