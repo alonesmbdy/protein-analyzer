@@ -1,0 +1,7 @@
+streamlit
+biopython
+requests
+openai
+ete3
+matplotlib
+python-dotenv
